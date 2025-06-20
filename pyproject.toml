@@ -1,16 +1,30 @@
 [project]
 name = "modular-structure-generation"
 version = "0.1.0"
-description = "Add your description here"
+description = "Comando CLI para Generación de Estructura Modular"
 readme = "README.md"
 requires-python = ">=3.13"
+authors = [
+  {name = "Erick Perez", email = "erickjpl@gmail.com"},
+]
+maintainers = [
+  {name = "Erick Perez", email = "erickjpl@gmail.com"}
+]
+keywords = ["SOLID", "Clean Code", "Escalabilidad", "Extensibilidad", "Mantenibilidad", "Consistencia"]
+license = "MIT"
 dependencies = []
 
+[project.urls]
+Homepage = "https://example.com"
+Documentation = "https://readthedocs.org"
+Repository = "https://github.com/me/spam.git"
+Issues = "https://github.com/me/spam/issues"
+Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [
-    "ruff>=0.3.0",
-    "pytest>=7.4.0",
+  "ruff>=0.3.0",
+  "pytest>=7.4.0",
 ]
 
 [tool.ruff]
@@ -18,5 +32,28 @@ line-length = 120
 indent-width = 2
 
 [tool.ruff.format]
+quote-style = "double"
 indent-style = "space"
-indent-width = 2
+docstring-code-format = true
+docstring-code-line-length = 20
+line-ending = "lf"
+preview = true
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+select = [
+  # pycodestyle
+  "E",
+  # Pyflakes
+  "F",
+  # pyupgrade
+  "UP",
+  # flake8-bugbear
+  "B",
+  # flake8-simplify
+  "SIM",
+  # isort
+  "I",
+]
+extend-safe-fixes = ["F601"]
+extend-unsafe-fixes = ["UP034"]
