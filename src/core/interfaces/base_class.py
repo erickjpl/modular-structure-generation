@@ -4,15 +4,22 @@ from typing import Protocol, runtime_checkable
 from core.interfaces.main import BaseGenerator
 
 
+class LanguageOption(Enum):
+  PYTHON = "python"
+
+
+class FrameworkOption(Enum): ...
+
+
 @runtime_checkable
 class LanguagePlugin(Protocol):
   @property
-  def language_name(self) -> str: ...
+  def language_name(self) -> LanguageOption: ...
 
   @property
-  def supported_frameworks(self) -> list[str]: ...
+  def supported_frameworks(self) -> list[FrameworkOption]: ...
 
-  def get_generator(self, framework: str | None = None) -> "BaseGenerator": ...
+  def get_generator(self, framework: FrameworkOption | None = None) -> BaseGenerator: ...
 
 
 # ==============================

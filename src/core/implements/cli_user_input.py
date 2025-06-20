@@ -14,6 +14,21 @@ class CLIUserInput(IUserInput):
     response = input(f"{message} (y/n): ").lower().strip()
     return response == "y"
 
+  def select_single_option(self, message: str, options: list[Enum]) -> Enum:
+    print(message)
+    for i, option in enumerate(options, 1):
+      option_value = option.value if hasattr(option, "value") else str(option)
+      print(f"{i}. {option_value}")
+
+    while True:
+      try:
+        selected = int(input("Select an option (number): ").strip())
+        if 1 <= selected <= len(options):
+          return options[selected - 1]
+        print("Invalid option, try again")
+      except ValueError:
+        print("Please enter a valid number")
+
   def select_options(self, message: str, options: list[Enum]) -> list[Enum]:
     print(message)
     for i, option in enumerate(options, 1):

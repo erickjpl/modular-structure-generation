@@ -15,10 +15,9 @@ class ModuleGenerator:
     context = {"app_name": self.user_input.get_application_name(), "module_name": self.user_input.get_module_name()}
 
     languages = list(self.factory._plugins.keys())
-    language = self.user_input.select_options("Select language:", languages)
+    language = self.user_input.select_single_option("Select language:", languages)
     frameworks = self.factory._plugins[language].supported_frameworks
-    framework = self.user_input.select_options("Select framework:", frameworks)
-
+    framework = self.user_input.select_single_option("Select framework:", frameworks)
     context.update({"language": language, "framework": framework})
 
     # Resto de la recolección de inputs (igual que antes)

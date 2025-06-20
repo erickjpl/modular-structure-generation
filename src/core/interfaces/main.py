@@ -19,6 +19,10 @@ class IUserInput(ABC):
     pass
 
   @abstractmethod
+  def select_single_option(self, message: str, options: list[Enum]) -> Enum:
+    pass
+
+  @abstractmethod
   def select_options(self, message: str, options: list[Enum]) -> list[Enum]:
     pass
 

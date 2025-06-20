@@ -1,20 +1,25 @@
-from core.interfaces.base_class import BaseGenerator
+from core.interfaces.base_class import BaseGenerator, FrameworkOption, LanguageOption, LanguagePlugin
 from plugins.python_django.django_domain_generator import DjangoDomainGenerator
 
 # from plugins.python_django.django_infrastructure_generator import DjangoInfrastructureGenerator
 
 
-class DjangoPlugin:
+class PythonFrameworkOption(FrameworkOption):
+  DJANGO = "django"
+  FASTAPI = "fastapi"
+
+
+class DjangoPlugin(LanguagePlugin):
   @property
-  def language_name(self) -> str:
-    return "Python"
+  def language_name(self) -> LanguageOption:
+    return LanguageOption.PYTHON
 
   @property
-  def supported_frameworks(self) -> list[str]:
-    return ["Django"]
+  def supported_frameworks(self) -> list[PythonFrameworkOption]:
+    return [PythonFrameworkOption.DJANGO]
 
-  def get_generator(self, framework: str | None = None) -> BaseGenerator:
-    if framework == "Django":
+  def get_generator(self, framework: PythonFrameworkOption | None = None) -> BaseGenerator:
+    if framework == PythonFrameworkOption.DJANGO:
       return DjangoDomainGenerator()
 
     raise ValueError(f"Unsupported framework: {framework}")
