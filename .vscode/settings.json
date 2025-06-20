@@ -1,0 +1,8 @@
+{
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "python.formatting.provider": "ruff",
+  "python.linting.enabled": true,
+  "python.linting.lintOnSave": true,
+  "python.linting.provider": "ruff"
+}
