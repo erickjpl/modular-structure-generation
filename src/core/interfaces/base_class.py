@@ -5,7 +5,9 @@ from core.generator.base_generator import BaseGenerator
 
 
 class LanguageOption(Enum):
+  PHP = "php"
   PYTHON = "python"
+  TYPESCRIPT = "typescript"
 
 
 class FrameworkOption(Enum): ...

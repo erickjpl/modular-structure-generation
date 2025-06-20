@@ -61,7 +61,8 @@ class ModuleGenerator:
     app_name = self.user_input.get_application_name()
     get_module_name = self.user_input.get_module_name()
     translate_text = asyncio.run(self.translate_text(get_module_name))
-    module_name = self.engine.singular_noun(translate_text)
+    singular_noun = self.engine.singular_noun(str(translate_text))
+    module_name = singular_noun if isinstance(singular_noun, str) else translate_text
     module_name_plural = self.engine.plural(module_name)
     context.update({"app_name": app_name, "module_name": module_name, "module_name_plural": module_name_plural})
 

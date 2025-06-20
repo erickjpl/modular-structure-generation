@@ -13,7 +13,7 @@ class GeneratorFactory:
     self._load_plugins()
 
   def _load_plugins(self):
-    plugins_dir = Path(__file__).parent.parent / "plugins"
+    plugins_dir = Path(__file__).parent.parent.parent / "plugins"
     for _finder, name, _ in pkgutil.iter_modules([str(plugins_dir)]):
       module = importlib.import_module(f"plugins.{name}")
       for item in dir(module):
@@ -28,6 +28,7 @@ class GeneratorFactory:
             plugin = obj()
 
             if isinstance(plugin, LanguagePlugin):
+              print(f"INFO: Loading plugin: {plugin.language_name}")
               self._plugins[plugin.language_name] = plugin
         except TypeError:
           continue
