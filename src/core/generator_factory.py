@@ -1,5 +1,6 @@
 import importlib
 import pkgutil
+from enum import Enum
 from pathlib import Path
 
 from core.interfaces.base_class import BaseGenerator, LanguagePlugin
@@ -11,16 +12,43 @@ class GeneratorFactory:
     self._load_plugins()
 
   def _load_plugins(self):
-    plugins_dir = Path(__file__).parent.parent / "plugins"
-    for _finder, name, _ in pkgutil.iter_modules([str(plugins_dir)]):
-      module = importlib.import_module(f"plugins.{name}")
-      for item in dir(module):
-        obj = getattr(module, item)
+    plugins = "plugins"
+    plugins_dir = Path(__file__).parent.parent / plugins
+
+    for _, plugin_dir_name, __ in pkgutil.iter_modules([str(plugins_dir)]):
+      plugin_path = plugins_dir / plugin_dir_name
+
+      for _, module_name, __ in pkgutil.iter_modules([str(plugin_path)]):
+        full_module_name = f"{plugins}.{plugin_dir_name}.{module_name}"
+
         try:
-          if issubclass(obj, LanguagePlugin) and obj is not LanguagePlugin:
-            plugin = obj()
-            self._plugins[plugin.language_name.lower()] = plugin
-        except TypeError:
+          module = importlib.import_module(full_module_name)
+
+          for item_name in dir(module):
+            obj = getattr(module, item_name)
+
+            if (
+              isinstance(obj, type)
+              and obj is not LanguagePlugin
+              and obj is not BaseGenerator
+              and not issubclass(obj, type(Enum) | Enum)
+            ):
+              try:
+                plugin = obj()
+                if isinstance(plugin, LanguagePlugin):
+                  self._plugins[plugin.language_name.lower()] = plugin
+              except TypeError as e:
+                print(f"ERROR: Could not instantiate class {obj.__name__} from module {full_module_name}: {e}")
+                continue
+              except Exception as e:
+                print(f"ERROR: Unexpected error instantiating {obj.__name__} from module {full_module_name}: {e}")
+                continue
+
+        except ImportError as e:
+          print(f"ERROR: Failed to import {full_module_name}: {e}")
+          continue
+        except Exception as e:
+          print(f"ERROR: General error processing {full_module_name}: {e}")
           continue
 
   def get_generator(self, language: str, framework: str | None = None) -> BaseGenerator:

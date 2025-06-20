@@ -1,5 +1,7 @@
-from core.generators import BaseGenerator
-from core.plugins.python_django.django_domain_generator import DjangoDomainGenerator
+from core.interfaces.base_class import BaseGenerator
+from plugins.python_django.django_domain_generator import DjangoDomainGenerator
+
+# from plugins.python_django.django_infrastructure_generator import DjangoInfrastructureGenerator
 
 
 class DjangoPlugin:

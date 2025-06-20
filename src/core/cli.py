@@ -4,8 +4,8 @@ from core.interfaces.main import IUserInput
 
 class ModuleGenerator:
   def __init__(self, user_input: IUserInput):
-    self.user_input = user_input
     self.factory = GeneratorFactory()
+    self.user_input = user_input
 
   def run(self):
     context = self._collect_inputs()
@@ -14,11 +14,10 @@ class ModuleGenerator:
   def _collect_inputs(self) -> dict:
     context = {"app_name": self.user_input.get_application_name(), "module_name": self.user_input.get_module_name()}
 
-    # Selección de lenguaje y framework
     languages = list(self.factory._plugins.keys())
-    language = self.user_input.select_option("Select language:", languages)
+    language = self.user_input.select_options("Select language:", languages)
     frameworks = self.factory._plugins[language].supported_frameworks
-    framework = self.user_input.select_option("Select framework:", frameworks)
+    framework = self.user_input.select_options("Select framework:", frameworks)
 
     context.update({"language": language, "framework": framework})
 

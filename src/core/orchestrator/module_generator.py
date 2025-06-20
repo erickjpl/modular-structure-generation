@@ -33,23 +33,22 @@ class ModuleGenerator:
   def _collect_inputs(self) -> dict:
     context = {"app_name": self.user_input.get_application_name(), "module_name": self.user_input.get_module_name()}
 
-    # Selección de lenguaje y framework
+    # Language and Framework Selection
     languages = list(self.factory._plugins.keys())
     language = self.user_input.select_option("Select language:", languages)
     frameworks = self.factory._plugins[language].supported_frameworks
     framework = self.user_input.select_option("Select framework:", frameworks)
-
     context.update({"language": language, "framework": framework})
 
     # Domain Layer
     if self.user_input.confirm_action("Do you want to configure domain layer?"):
       domain_options = self.user_input.select_options("Select domain options:", list(DomainOption))
-      context["domain_options"] = domain_options
+      context.update({"domain_options": domain_options})
 
       if DomainOption.ENTITIES in domain_options and self.user_input.confirm_action(
         "Do you want to add attributes to the entity?"
       ):
-        context["entity_attributes"] = self.user_input.get_entity_attributes()
+        context.update({"entity_attributes": self.user_input.get_entity_attributes()})
 
     # Application Layer
     if self.user_input.confirm_action("Do you want to configure application layer?"):
