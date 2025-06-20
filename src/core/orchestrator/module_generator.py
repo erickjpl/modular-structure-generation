@@ -1,3 +1,4 @@
+from core.generator_factory import GeneratorFactory
 from core.implements.application_layer_generator import ApplicationLayerGenerator
 from core.implements.domain_layer_generator import DomainLayerGenerator
 from core.implements.infrastructure_layer_generator import InfrastructureLayerGenerator
@@ -18,6 +19,7 @@ from core.interfaces.main import IUserInput
 class ModuleGenerator:
   def __init__(self, user_input: IUserInput):
     self.user_input = user_input
+    self.factory = GeneratorFactory()
     self.generators = {
       LayerType.DOMAIN: DomainLayerGenerator(),
       LayerType.APPLICATION: ApplicationLayerGenerator(),
@@ -30,6 +32,14 @@ class ModuleGenerator:
 
   def _collect_inputs(self) -> dict:
     context = {"app_name": self.user_input.get_application_name(), "module_name": self.user_input.get_module_name()}
+
+    # Selección de lenguaje y framework
+    languages = list(self.factory._plugins.keys())
+    language = self.user_input.select_option("Select language:", languages)
+    frameworks = self.factory._plugins[language].supported_frameworks
+    framework = self.user_input.select_option("Select framework:", frameworks)
+
+    context.update({"language": language, "framework": framework})
 
     # Domain Layer
     if self.user_input.confirm_action("Do you want to configure domain layer?"):
@@ -74,14 +84,19 @@ class ModuleGenerator:
     return context
 
   def _generate_structure(self, context: dict):
+    generator = self.factory.get_generator(context["language"], context["framework"])
+
     # Domain Layer
     if "domain_options" in context:
+      generator.generate(context)
       self.generators[LayerType.DOMAIN].generate(context)
 
     # Application Layer
     if "application_options" in context:
+      generator.generate(context)
       self.generators[LayerType.APPLICATION].generate(context)
 
     # Infrastructure Layer
     if "infrastructure_options" in context:
+      generator.generate(context)
       self.generators[LayerType.INFRASTRUCTURE].generate(context)

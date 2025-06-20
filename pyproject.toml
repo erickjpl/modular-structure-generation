@@ -24,6 +24,15 @@ Repository = "https://github.com/me/spam.git"
 Issues = "https://github.com/me/spam/issues"
 Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
 
+[tool.flake8]
+max-line-length = 120
+indent-size = 2
+# Si quieres ignorar algunas advertencias (ej: 'W503' para el salto de línea antes de operador binario)
+# ignore = ["W503", "E203"]
+exclude = [".git", "__pycache__", "build", "dist", "venv"]
+select = ["E", "F", "W", "C90", "N8"]
+ignore = "E111"
+
 [project.optional-dependencies]
 dev = [
   "ruff>=0.3.0",

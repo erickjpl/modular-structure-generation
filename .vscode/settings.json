@@ -1,5 +1,6 @@
 {
   "ruff.configuration": "../pyproject.toml",
+  "flake8.args": ["--config=../pyproject.toml"],
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.codeActionsOnSave": {
