@@ -38,3 +38,10 @@ ruff check --fix
 ```
 ruff format
 ```
+
+
+**Ruff con UV**
+```
+uvx ruff check
+uvx ruff check --fix
+```

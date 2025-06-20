@@ -1,8 +1,12 @@
 {
-  "editor.tabSize": 2,
-  "editor.formatOnSave": true,
-  "python.formatting.provider": "ruff",
-  "python.linting.enabled": true,
-  "python.linting.lintOnSave": true,
-  "python.linting.provider": "ruff"
+  "ruff.configuration": "../pyproject.toml",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+  }
 }
