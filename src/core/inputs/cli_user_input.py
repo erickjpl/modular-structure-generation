@@ -1,9 +1,9 @@
 from enum import Enum
 
-from core.inputs.interface_user_input import IUserInput
+from core.inputs.interface_user_input import InterfaceUserInput
 
 
-class CLIUserInput(IUserInput):
+class CLIUserInput(InterfaceUserInput):
   def get_application_name(self) -> str:
     return input("Enter application name: ").strip()
 

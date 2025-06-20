@@ -1,8 +1,8 @@
+from core.generator.interface_file_generator import InterfaceFileGenerator
 from core.interfaces.base_class import ApplicationOption, CommandOption
-from core.interfaces.main import IFileGenerator
 
 
-class ApplicationLayerGenerator(IFileGenerator):
+class ApplicationLayerGenerator(InterfaceFileGenerator):
   def generate(self, context: dict):
     options = context.get("application_options", [])
     module_name = context["module_name"]

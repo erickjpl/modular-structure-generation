@@ -1,8 +1,8 @@
+from core.generator.interface_file_generator import InterfaceFileGenerator
 from core.interfaces.base_class import InfrastructureOption, PersistenceOption
-from core.interfaces.main import IFileGenerator
 
 
-class InfrastructureLayerGenerator(IFileGenerator):
+class InfrastructureLayerGenerator(InterfaceFileGenerator):
   def generate(self, context: dict):
     options = context.get("infrastructure_options", [])
     module_name = context["module_name"]

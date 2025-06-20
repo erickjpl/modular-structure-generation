@@ -1,8 +1,8 @@
+from core.generator.interface_file_generator import InterfaceFileGenerator
 from core.interfaces.base_class import DomainOption
-from core.interfaces.main import IFileGenerator
 
 
-class DomainLayerGenerator(IFileGenerator):
+class DomainLayerGenerator(InterfaceFileGenerator):
   def generate(self, context: dict):
     options = context.get("domain_options", [])
     module_name = context["module_name"]

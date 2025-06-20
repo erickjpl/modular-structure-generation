@@ -1,13 +1,6 @@
-from abc import ABC, abstractmethod
 from pathlib import Path
 
 import jinja2
-
-
-class IFileGenerator(ABC):
-  @abstractmethod
-  def generate(self, context: dict):
-    pass
 
 
 class BaseGenerator:

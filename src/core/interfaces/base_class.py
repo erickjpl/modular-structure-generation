@@ -1,7 +1,7 @@
 from enum import Enum, auto
 from typing import Protocol, runtime_checkable
 
-from core.interfaces.main import BaseGenerator
+from core.generator.base_generator import BaseGenerator
 
 
 class LanguageOption(Enum):

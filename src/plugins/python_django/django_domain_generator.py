@@ -1,6 +1,7 @@
 from pathlib import Path
 
-from core.interfaces.base_class import BaseGenerator, DomainOption
+from core.generator.base_generator import BaseGenerator
+from core.interfaces.base_class import DomainOption
 
 
 class DjangoDomainGenerator(BaseGenerator):

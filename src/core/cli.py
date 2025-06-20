@@ -3,12 +3,12 @@ import asyncio
 from googletrans import Translator
 from inflect import engine
 
-from core.generator_factory import GeneratorFactory
-from core.inputs.interface_user_input import IUserInput
+from core.generator.base_generator import BaseGenerator
+from core.generator.generator_factory import GeneratorFactory
+from core.inputs.interface_user_input import InterfaceUserInput
 from core.interfaces.base_class import (
   ApiOption,
   ApplicationOption,
-  BaseGenerator,
   CommandOption,
   DomainOption,
   InfrastructureOption,
@@ -19,7 +19,7 @@ from core.interfaces.base_class import (
 
 
 class ModuleGenerator:
-  def __init__(self, user_input: IUserInput):
+  def __init__(self, user_input: InterfaceUserInput):
     self.factory = GeneratorFactory()
     self.user_input = user_input
     self.engine = engine()

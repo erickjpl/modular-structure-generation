@@ -3,7 +3,8 @@ import pkgutil
 from enum import Enum
 from pathlib import Path
 
-from core.interfaces.base_class import BaseGenerator, FrameworkOption, LanguageOption, LanguagePlugin
+from core.generator.base_generator import BaseGenerator
+from core.interfaces.base_class import FrameworkOption, LanguageOption, LanguagePlugin
 
 
 class GeneratorFactory:

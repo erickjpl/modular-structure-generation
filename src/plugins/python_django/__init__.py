@@ -1,4 +1,5 @@
-from core.interfaces.base_class import BaseGenerator, FrameworkOption, LanguageOption, LanguagePlugin
+from core.generator.base_generator import BaseGenerator
+from core.interfaces.base_class import FrameworkOption, LanguageOption, LanguagePlugin
 from plugins.python_django.django_domain_generator import DjangoDomainGenerator
 
 # from plugins.python_django.django_infrastructure_generator import DjangoInfrastructureGenerator
