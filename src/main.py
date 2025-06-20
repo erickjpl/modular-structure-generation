@@ -1,5 +1,5 @@
 from core.cli import ModuleGenerator
-from core.implements.cli_user_input import CLIUserInput
+from core.inputs.cli_user_input import CLIUserInput
 
 
 def main():

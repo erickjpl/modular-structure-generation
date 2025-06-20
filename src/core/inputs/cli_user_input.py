@@ -1,6 +1,6 @@
 from enum import Enum
 
-from core.interfaces.main import IUserInput
+from core.inputs.interface_user_input import IUserInput
 
 
 class CLIUserInput(IUserInput):

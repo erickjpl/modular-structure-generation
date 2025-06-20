@@ -1,35 +1,135 @@
+import asyncio
+
+from googletrans import Translator
+from inflect import engine
+
 from core.generator_factory import GeneratorFactory
-from core.interfaces.main import IUserInput
+from core.inputs.interface_user_input import IUserInput
+from core.interfaces.base_class import (
+  ApiOption,
+  ApplicationOption,
+  BaseGenerator,
+  CommandOption,
+  DomainOption,
+  InfrastructureOption,
+  PersistenceOption,
+  QueryOption,
+  ViewOption,
+)
 
 
 class ModuleGenerator:
   def __init__(self, user_input: IUserInput):
     self.factory = GeneratorFactory()
     self.user_input = user_input
+    self.engine = engine()
 
   def run(self):
     context = self._collect_inputs()
     self._generate_structure(context)
 
-  def _collect_inputs(self) -> dict:
-    context = {"app_name": self.user_input.get_application_name(), "module_name": self.user_input.get_module_name()}
+  async def translate_text(self, text: str) -> str:
+    async with Translator() as translator:
+      try:
+        result = await translator.translate(text, dest="en", src="auto")
+        return result.text
+      except Exception as e:
+        print(f"Error trying to translate the text: {e}")
+        return text
 
+  def _collect_inputs(self) -> dict:
+    context = {}
+
+    # Module and Application Names Section
+    self._collect_basic_names(context)
+
+    # Language and Framework Selection
+    self._collect_language_and_framework(context)
+
+    # Domain Layer
+    self._collect_domain_layer_inputs(context)
+
+    # Application Layer
+    self._collect_application_layer_inputs(context)
+
+    # Infrastructure Layer
+    self._collect_infrastructure_layer_inputs(context)
+
+    return context
+
+  def _collect_basic_names(self, context: dict) -> None:
+    app_name = self.user_input.get_application_name()
+    get_module_name = self.user_input.get_module_name()
+    translate_text = asyncio.run(self.translate_text(get_module_name))
+    module_name = self.engine.singular_noun(translate_text)
+    module_name_plural = self.engine.plural(module_name)
+    context.update({"app_name": app_name, "module_name": module_name, "module_name_plural": module_name_plural})
+
+  def _collect_language_and_framework(self, context: dict) -> None:
     languages = list(self.factory._plugins.keys())
     language = self.user_input.select_single_option("Select language:", languages)
     frameworks = self.factory._plugins[language].supported_frameworks
     framework = self.user_input.select_single_option("Select framework:", frameworks)
     context.update({"language": language, "framework": framework})
 
-    # Resto de la recolección de inputs (igual que antes)
-    # ...
+  def _collect_domain_layer_inputs(self, context: dict) -> None:
+    if self.user_input.confirm_action("Do you want to configure domain layer?"):
+      domain_options = self.user_input.select_options("Select domain options:", list(DomainOption))
+      context.update({"domain_options": domain_options})
 
-    return context
+      if DomainOption.ENTITIES in domain_options and self.user_input.confirm_action(
+        "Do you want to add attributes to the entity?"
+      ):
+        context.update({"entity_attributes": self.user_input.get_entity_attributes()})
+
+  def _collect_application_layer_inputs(self, context: dict) -> None:
+    if self.user_input.confirm_action("Do you want to configure application layer?"):
+      app_options = self.user_input.select_options("Select application options:", list(ApplicationOption))
+      context["application_options"] = app_options
+
+      if ApplicationOption.COMMANDS in app_options:
+        command_options = self.user_input.select_options("Select command types:", list(CommandOption))
+        context["command_options"] = command_options
+
+      if ApplicationOption.QUERIES in app_options:
+        query_options = self.user_input.select_options("Select query types:", list(QueryOption))
+        context["query_options"] = query_options
+
+  def _collect_infrastructure_layer_inputs(self, context: dict):
+    if self.user_input.confirm_action("Do you want to configure infrastructure layer?"):
+      infra_options = self.user_input.select_options("Select infrastructure options:", list(InfrastructureOption))
+      context["infrastructure_options"] = infra_options
+
+      if InfrastructureOption.PERSISTENCE in infra_options:
+        persistence_options = self.user_input.select_options("Select persistence options:", list(PersistenceOption))
+        context["persistence_options"] = persistence_options
+
+      if InfrastructureOption.API in infra_options:
+        api_options = self.user_input.select_options("Select API options:", list(ApiOption))
+        context["api_options"] = api_options
+
+        if ApiOption.VIEWS in api_options:
+          view_options = self.user_input.select_options("Select view types:", list(ViewOption))
+          context["view_options"] = view_options
 
   def _generate_structure(self, context: dict):
-    generator = self.factory.get_generator(context["language"], context["framework"])
+    main_generator = self.factory.get_generator(context["language"], context["framework"])
 
+    self._generate_domain_layer(main_generator, context)
+    self._generate_application_layer(main_generator, context)
+    self._generate_infrastructure_layer(main_generator, context)
+
+  def _generate_domain_layer(self, main_generator: BaseGenerator, context: dict):
     if "domain_options" in context:
-      generator.generate(context)
+      print("INFO: Generating Domain Layer...")
+      main_generator.generate(context)
 
-    # Generar otras capas
-    # ...
+  def _generate_application_layer(self, main_generator: BaseGenerator, context: dict):
+    if "application_options" in context:
+      print("INFO: Generating Application Layer...")
+      main_generator.generate(context)
+
+  def _generate_infrastructure_layer(self, main_generator: BaseGenerator, context: dict):
+    if "infrastructure_options" in context:
+      print("INFO: Generating Infrastructure Layer...")
+      main_generator.generate(context)

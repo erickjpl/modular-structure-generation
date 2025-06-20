@@ -1,20 +1,15 @@
-from django.db.models import (
-  Model,
-  {% for attr in attributes %}
-    {{ attr.type|default('CharField') }},
-  {% endfor %}
-) 
+from django.db.models import Model, {% for attr in attributes %}{{ attr.type|default('CharField') }},{% endfor %}
 from typing import Optional
 
-class {{ module_name|capitalize }}(models.Model):
+class {{ module_name|capitalize }}(Model):
   """{{ module_name|capitalize }} entity model"""
   {% for attr in attributes %}
-    {{ attr.name }} = models.{{ attr.type|default('CharField') }}(max_length=255{% if not attr.required %}, null=True, blank=True{% endif %})
+    {{ attr.name }} = {{ attr.type|default('CharField') }}(max_length=255{% if not attr.required %}, null=True, blank=True{% endif %})
   {% endfor %}
   
   class Meta:
     verbose_name = "{{ module_name|capitalize }}"
-    verbose_name_plural = "{{ module_name|capitalize }}s"
+    verbose_name_plural = "{{ module_name_plural|capitalize }}s"
   
   def __str__(self):
     return f"{self.__class__.__name__} object"

@@ -13,6 +13,8 @@ maintainers = [
 keywords = ["SOLID", "Clean Code", "Escalabilidad", "Extensibilidad", "Mantenibilidad", "Consistencia"]
 license = "MIT"
 dependencies = [
+  "googletrans>=4.0.2",
+  "inflect>=7.5.0",
   "jinja2>=3.1.6",
   "ruff>=0.12.0",
 ]
