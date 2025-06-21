@@ -1,4 +1,4 @@
-from argparse import SUPPRESS, ArgumentError, ArgumentParser, Namespace
+from argparse import ArgumentError, ArgumentParser, Namespace
 from pathlib import Path
 
 from core.generator.project_initializer import ProjectInitializer
@@ -8,15 +8,19 @@ from core.services.validators import validate_project_name
 
 
 class InitCommand:
-  def __init__(self):
+  def __init__(self, parser: ArgumentParser | None = None):
     self.template_manager = TemplateManager()
-    self.parser = self._create_parser()
+    self.parser = parser if parser is not None else self._argument_parser()
+    self._configure_parser(self.parser)
 
-  def _create_parser(self) -> ArgumentParser:
-    parser = ArgumentParser(
-      description="Initialize a new project from a template", usage="init --template TEMPLATE [options]", add_help=False
+  def _argument_parser(self) -> ArgumentParser:
+    return ArgumentParser(
+      description="Initialize a new project from a template",
+      usage="main.py init --template TEMPLATE [options]",
+      add_help=False,
     )
 
+  def _configure_parser(self, parser: ArgumentParser) -> None:
     required = parser.add_argument_group("required arguments")
     required.add_argument(
       "--template", required=True, choices=[t.value for t in TemplateOption], help="Project template to use"
@@ -33,9 +37,6 @@ class InitCommand:
     )
     optional.add_argument("--use-docker", action="store_true", help="Include Docker setup files")
     optional.add_argument("--not-git", action="store_true", help="Skip git repository initialization")
-    optional.add_argument("-h", "--help", action="help", default=SUPPRESS, help="Show this help message")
-
-    return parser
 
   def _get_project_name(self, args: Namespace) -> str:
     if args.name:
@@ -66,19 +67,17 @@ class InitCommand:
       database=DatabaseOption(args.database.lower()),
     )
 
-  def execute(self, args: list[str] = None):
+  def execute(self, parsed_args: Namespace):
     try:
-      parsed_args = self.parser.parse_args(args)
       config = self._create_config(parsed_args)
-      self._create_config(config)
 
       print(f"\n🚀 Initializing project {config.name_project}")
       print(f"📦 Template: {config.template}")
-      print(f"🗃️ Database: {config.database.value}")
+      print(f"🗃️  Database: {config.database.value}")
       if config.use_docker:
         print("🐳 Docker Configuration: Yes")
       if not config.not_git:
-        print(" - Git repository initialized")
+        print("🥬 Git repository initialized")
 
       initializer = ProjectInitializer(self.template_manager)
       initializer.initialize_project(config)
