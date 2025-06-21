@@ -37,5 +37,16 @@ class DjangoDomainGenerator(BaseGenerator):
     output_path = Path(f"{app_name}/{module_name_plural}/domain/{module_name}.py")
     self.generate_file(output_path, model_content)
 
-  def _generate_value_objects(self, context: dict):
-    pass
+  def _generate_value_objects(self, app_name: str, module_name_plural: str, module_name: str, attributes: list[dict]):
+    model_content = self.render_template(
+      "domain/entity.py.j2",
+      {
+        "app_name": app_name,
+        "module_name": module_name,
+        "module_name_plural": module_name_plural,
+        "attributes": attributes,
+      },
+    )
+
+    output_path = Path(f"{app_name}/{module_name_plural}/domain/value_objects/{module_name}.py")
+    self.generate_file(output_path, model_content)

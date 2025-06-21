@@ -1,0 +1,22 @@
+class Number:
+  def __init__(self, value: int):
+    if not isinstance(value, int):
+      raise ValueError("Age must be an integer.")
+    if not (0 <= value <= 150): # Rango razonable para una edad
+      raise ValueError("Age must be between 0 and 150.")
+    self._value = value
+
+  @property
+  def value(self) -> int:
+    return self._value
+
+  def __eq__(self, other: object) -> bool:
+    if not isinstance(other, Age):
+      return NotImplemented
+    return self.value == other.value
+
+  def __hash__(self) -> int:
+    return hash(self.value)
+
+  def __str__(self) -> str:
+    return str(self.value)

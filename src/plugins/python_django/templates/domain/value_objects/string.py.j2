@@ -1,0 +1,27 @@
+import re
+
+class String:
+  def __init__(self, value: str):
+    if not isinstance(value, str):
+      raise ValueError("Username must be a string.")
+    value = value.strip()
+    if not (3 <= len(value) <= 20):
+      raise ValueError("Username must be between 3 and 20 characters long.")
+    if not re.fullmatch(r"^[a-zA-Z0-9_.]+$", value):
+      raise ValueError("Username can only contain letters, numbers, underscores, and dots.")
+    self._value = value
+
+  @property
+  def value(self) -> str:
+    return self._value
+
+  def __eq__(self, other: object) -> bool:
+    if not isinstance(other, Username):
+      return NotImplemented
+    return self.value == other.value
+
+  def __hash__(self) -> int:
+    return hash(self.value)
+
+  def __str__(self) -> str:
+    return self.value
