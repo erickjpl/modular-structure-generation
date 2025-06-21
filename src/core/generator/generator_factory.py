@@ -28,7 +28,6 @@ class GeneratorFactory:
             plugin = obj()
 
             if isinstance(plugin, LanguagePlugin):
-              print(f"INFO: Loading plugin: {plugin.language_name}")
               self._plugins[plugin.language_name] = plugin
         except TypeError:
           continue

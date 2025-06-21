@@ -27,6 +27,7 @@ class ModuleGenerator:
   def run(self):
     context = self._collect_inputs()
     self._generate_structure(context)
+    print("\n✅ Setup completed successfully\n")
 
   async def translate_text(self, text: str) -> str:
     async with Translator() as translator:
@@ -40,20 +41,36 @@ class ModuleGenerator:
   def _collect_inputs(self) -> dict:
     context = {}
 
-    # Module and Application Names Section
-    self._collect_basic_names(context)
+    try:
+      # Friendly initial message
+      print("\n🛠️  Module Generation Wizard")
+      print("Press Ctrl+C at any time to cancel\n")
 
-    # Language and Framework Selection
-    self._collect_language_and_framework(context)
+      # Module and Application Names Section
+      print("\n📝 Module Basic Information")
+      self._collect_basic_names(context)
 
-    # Domain Layer
-    self._collect_domain_layer_inputs(context)
+      # Language and Framework Selection
+      print("\n🌐 Language and framework selection")
+      self._collect_language_and_framework(context)
 
-    # Application Layer
-    self._collect_application_layer_inputs(context)
+      # Domain Layer
+      self._collect_domain_layer_inputs(context)
 
-    # Infrastructure Layer
-    self._collect_infrastructure_layer_inputs(context)
+      # Application Layer
+      self._collect_application_layer_inputs(context)
+
+      # Infrastructure Layer
+      self._collect_infrastructure_layer_inputs(context)
+    except KeyboardInterrupt:
+      print("\n\n🛑 Operation canceled by user. Exiting wizard....")
+      print("💡 You can run the command again whenever you need.\n")
+      print("✨ Thanks for using the module builder. See you soon!")
+      exit(0)
+    except Exception as e:
+      print(f"\n❌ Unexpected error: {str(e)}")
+      print("🔧 Please report this bug so we can improve it.")
+      exit(1)
 
     return context
 
@@ -75,6 +92,7 @@ class ModuleGenerator:
 
   def _collect_domain_layer_inputs(self, context: dict) -> None:
     if self.user_input.confirm_action("Do you want to configure domain layer?"):
+      print("\n🏗️  Domain layer configuration")
       domain_options = self.user_input.select_options("Select domain options:", list(DomainOption))
       context.update({"domain_options": domain_options})
 
@@ -85,6 +103,7 @@ class ModuleGenerator:
 
   def _collect_application_layer_inputs(self, context: dict) -> None:
     if self.user_input.confirm_action("Do you want to configure application layer?"):
+      print("\n🏗️  Application layer configuration")
       app_options = self.user_input.select_options("Select application options:", list(ApplicationOption))
       context["application_options"] = app_options
 
@@ -98,6 +117,7 @@ class ModuleGenerator:
 
   def _collect_infrastructure_layer_inputs(self, context: dict):
     if self.user_input.confirm_action("Do you want to configure infrastructure layer?"):
+      print("\n🏗️  Infrastructure layer configuration")
       infra_options = self.user_input.select_options("Select infrastructure options:", list(InfrastructureOption))
       context["infrastructure_options"] = infra_options
 
