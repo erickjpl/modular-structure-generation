@@ -4,7 +4,7 @@ from enum import Enum
 from pathlib import Path
 
 from core.generator.base_generator import BaseGenerator
-from core.interfaces.base_class import FrameworkOption, LanguageOption, LanguagePlugin
+from core.interfaces.base_class import FrameworkOption, LanguageOption, LanguagePlugin, LayerType
 
 
 class GeneratorFactory:
@@ -33,8 +33,48 @@ class GeneratorFactory:
         except TypeError:
           continue
 
-  def get_generator(self, language: LanguageOption, framework: FrameworkOption | None = None) -> BaseGenerator:
+  def get_generator(
+    self, language: LanguageOption, framework: FrameworkOption | None = None, layer: LayerType | None = None
+  ) -> BaseGenerator:
     if language not in self._plugins:
-      raise ValueError(f"Unsupported language: {language}")
+      raise ValueError(
+        f"Unsupported language '{language.value}' is not supported."
+        f"Available options: {[lang.value for lang in self._plugins]}"
+      )
+
+    plugin = self._plugins[language]
+
+    if framework is not None and framework not in plugin.supported_frameworks:
+      raise ValueError(
+        f"Framework '{framework.value}' is not supported for language '{language.value}'. "
+        f"Available options: {[f.value for f in plugin.supported_frameworks]}"
+      )
+
+    generator = plugin.get_generator(framework, layer)
+
+    if layer is not None and not self._validate_layer_support(generator, layer):
+      supported_layers = self._get_supported_layers(generator)
+      raise ValueError(
+        f"Layer '{layer.value}' is not supported by this generator. "
+        f"Available layers: {[layer.value for layer in supported_layers]}"
+      )
 
     return self._plugins[language].get_generator(framework)
+
+  def _validate_layer_support(self, generator: BaseGenerator, layer: LayerType) -> bool:
+    layer_methods = {
+      LayerType.DOMAIN: hasattr(generator, "generate_domain"),
+      LayerType.APPLICATION: hasattr(generator, "generate_application"),
+      LayerType.INFRASTRUCTURE: hasattr(generator, "generate_infrastructure"),
+    }
+    return layer_methods.get(layer, False)
+
+  def _get_supported_layers(self, generator: BaseGenerator) -> list[LayerType]:
+    supported = []
+    if hasattr(generator, "generate_domain"):
+      supported.append(LayerType.DOMAIN)
+    if hasattr(generator, "generate_application"):
+      supported.append(LayerType.APPLICATION)
+    if hasattr(generator, "generate_infrastructure"):
+      supported.append(LayerType.INFRASTRUCTURE)
+    return supported

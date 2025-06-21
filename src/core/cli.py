@@ -3,7 +3,6 @@ import asyncio
 from googletrans import Translator
 from inflect import engine
 
-from core.generator.base_generator import BaseGenerator
 from core.generator.generator_factory import GeneratorFactory
 from core.inputs.interface_user_input import InterfaceUserInput
 from core.interfaces.base_class import (
@@ -12,6 +11,7 @@ from core.interfaces.base_class import (
   CommandOption,
   DomainOption,
   InfrastructureOption,
+  LayerType,
   PersistenceOption,
   QueryOption,
   ViewOption,
@@ -114,23 +114,28 @@ class ModuleGenerator:
           context["view_options"] = view_options
 
   def _generate_structure(self, context: dict):
-    main_generator = self.factory.get_generator(context["language"], context["framework"])
+    self._generate_domain_layer(context)
+    self._generate_application_layer(context)
+    self._generate_infrastructure_layer(context)
 
-    self._generate_domain_layer(main_generator, context)
-    self._generate_application_layer(main_generator, context)
-    self._generate_infrastructure_layer(main_generator, context)
-
-  def _generate_domain_layer(self, main_generator: BaseGenerator, context: dict):
+  def _generate_domain_layer(self, context: dict):
     if "domain_options" in context:
       print("INFO: Generating Domain Layer...")
-      main_generator.generate(context)
+      domain_generator = self.factory.get_generator(context["language"], context["framework"], LayerType.DOMAIN)
+      domain_generator.generate(context)
 
-  def _generate_application_layer(self, main_generator: BaseGenerator, context: dict):
+  def _generate_application_layer(self, context: dict):
     if "application_options" in context:
       print("INFO: Generating Application Layer...")
-      main_generator.generate(context)
+      application_generator = self.factory.get_generator(
+        context["language"], context["framework"], LayerType.APPLICATION
+      )
+      application_generator.generate(context)
 
-  def _generate_infrastructure_layer(self, main_generator: BaseGenerator, context: dict):
+  def _generate_infrastructure_layer(self, context: dict):
     if "infrastructure_options" in context:
       print("INFO: Generating Infrastructure Layer...")
-      main_generator.generate(context)
+      infrastructure_generator = self.factory.get_generator(
+        context["language"], context["framework"], LayerType.INFRASTRUCTURE
+      )
+      infrastructure_generator.generate(context)
