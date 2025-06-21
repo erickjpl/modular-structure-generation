@@ -1,4 +1,4 @@
-from core.interfaces.init_command_base import TemplateInfo
+from core.interfaces.init_command_base import DatabaseOption, TemplateInfo, TemplateOption
 
 
 class ListTemplatesCommand:
@@ -8,15 +8,21 @@ class ListTemplatesCommand:
   def _load_templates_info(self) -> list[TemplateInfo]:
     return [
       TemplateInfo(
-        name="python-django",
+        name=TemplateOption.PYTHON_DJANGO,
         description="Django project with REST API support",
-        databases=["sqlite", "postgres", "mysql"],
+        databases=[DatabaseOption.SQLITE, DatabaseOption.POSTGRES, DatabaseOption.MYSQL],
+        supports_docker=True,
+      ),
+      TemplateInfo(
+        name=TemplateOption.TS_EXPRESS,
+        description="Express.js project with TypeScript",
+        databases=[DatabaseOption.SQLITE, DatabaseOption.POSTGRES, DatabaseOption.MYSQL, DatabaseOption.MONGODB],
         supports_docker=True,
       ),
       TemplateInfo(
         name="php-laravel",
         description="Laravel project with MVC structure",
-        databases=["mysql", "postgres"],
+        databases=[DatabaseOption.SQLITE, DatabaseOption.MYSQL],
         supports_docker=True,
       ),
     ]
