@@ -39,11 +39,14 @@ class DependencyManager:
   def check_requirements(self, requirements: list[tuple[str, str]]) -> bool:
     all_ok = True
     for dep, dep_type in requirements:
+      print(f"📍 Comprobando la dependencia {dep}")
       if not self.checkers[dep_type].check_dependency(dep):
         print(f"❌ Falta dependencia: {dep}")
         all_ok = False
         if not self._ask_and_install(dep, dep_type):
           return False
+      else:
+        print(f"✅ Dependencia {dep} encontrada")
     return all_ok
 
   def _ask_and_install(self, dependency: str, dep_type: str) -> bool:

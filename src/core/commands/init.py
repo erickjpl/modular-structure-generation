@@ -3,13 +3,11 @@ from pathlib import Path
 
 from core.generator.project_initializer import ProjectInitializer
 from core.interfaces.init_command_base import DatabaseOption, InitCommandConfig, TemplateOption
-from core.services.template_manager import TemplateManager
 from core.services.validators import validate_project_name
 
 
 class InitCommand:
   def __init__(self, parser: ArgumentParser | None = None):
-    self.template_manager = TemplateManager()
     self.parser = parser if parser is not None else self._argument_parser()
     self._configure_parser(self.parser)
 
@@ -43,12 +41,6 @@ class InitCommand:
       return validate_project_name(args.name)
     return validate_project_name(args.template.replace("-", "_"))
 
-  def _get_available_templates(self) -> list[str]:
-    return ["python-django", "php-laravel", "ts-express", "js-express"]
-
-  def _get_template_choices(self) -> list[str]:
-    return [f"template-{t}" for t in self.available_templates] + self.available_templates
-
   def _get_project_path(self, args: Namespace, project_name: str) -> Path:
     if args.path:
       return args.path / project_name
@@ -77,9 +69,9 @@ class InitCommand:
       if config.use_docker:
         print("🐳 Docker Configuration: Yes")
       if not config.not_git:
-        print("🥬 Git repository initialized")
+        print("🥬 Setting up the Git repository: Yes")
 
-      initializer = ProjectInitializer(self.template_manager)
+      initializer = ProjectInitializer()
       initializer.initialize_project(config)
     except ArgumentError as e:
       print(f"\n❌ Argument error: {str(e)}")

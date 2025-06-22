@@ -15,7 +15,7 @@ class TemplateManager:
       description="Django project with modern setup",
       databases=[DatabaseOption.SQLITE, DatabaseOption.POSTGRES, DatabaseOption.MYSQL],
       supports_docker=True,
-      required_dependencies=[("python", "system"), ("django", "python"), ("pip", "system")],
+      required_dependencies=[("python", "system")],
       github_url="https://github.com/django/django",
     ),
     TemplateOption.TS_EXPRESS.value: TemplateInfo(
@@ -24,7 +24,7 @@ class TemplateManager:
       description="Express.js project with TypeScript",
       databases=[DatabaseOption.SQLITE, DatabaseOption.POSTGRES, DatabaseOption.MONGODB],
       supports_docker=True,
-      required_dependencies=[("node", "system"), ("npm", "system"), ("typescript", "system")],
+      required_dependencies=[("node", "system"), ("npm", "system")],
       github_url="https://github.com/expressjs/express",
     ),
     TemplateOption.PHP_LARAVEL.value: TemplateInfo(
@@ -55,6 +55,7 @@ class TemplateManager:
     return self.dependency_manager.check_requirements(template_info.required_dependencies)
 
   def render_template(self, template_name: str, context: dict, output_path: Path):
+    print(f"📦 Rendering template: {template_name} - {self.TEMPLATES_DIR}")
     template_path = self.TEMPLATES_DIR / template_name
     if not template_path.exists():
       raise ValueError(f"Template directory {template_name} not found")

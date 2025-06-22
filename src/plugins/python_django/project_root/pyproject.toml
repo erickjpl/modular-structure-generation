@@ -1,0 +1,41 @@
+[project]
+name = "project-root"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+  "django>=5.2.3",
+  "djangorestframework>=3.16.0",
+  "djangorestframework-simplejwt>=5.5.0",
+  "python-dotenv>=1.1.0",
+]
+
+[tool.ruff]
+line-length = 120
+indent-width = 2
+select = [
+  "E",   # Pycodestyle errors
+  "F",   # Pyflakes
+  "W",   # Pycodestyle warnings
+  "I",   # Isort
+  "C",   # Complexity
+  "B",   # Bugbear
+  "UP",  # Pyupgrade
+]
+ignore = ["E501"]
+
+[tool.uv]
+scripts = [
+  "lint = 'ruff check .'",
+  "format = 'ruff format .'",
+  "fix = 'ruff check --fix'",
+  "migrate = 'python manage.py migrate'",
+  "runserver = 'python manage.py runserver'",
+  "startapp = 'python manage.py startapp'"
+]
+
+[project.optional-dependencies]
+dev = [
+  "ruff>=0.3.0",
+]

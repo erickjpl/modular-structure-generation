@@ -102,3 +102,8 @@ extend-safe-fixes = ["F601"]
 extend-unsafe-fixes = ["UP034"]
 
 [tool.ruff.lint.flake8-annotations]
+
+[tool.uv.workspace]
+members = [
+    "src/plugins/python_django/project_root",
+]
