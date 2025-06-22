@@ -1,27 +1,45 @@
-version: '3.8'
-
 services:
-  web:
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/code
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
-      - DEBUG=True
-
   db:
-    image: postgres:13
+    restart: always
+    container_name: {{ project_name }}_db
+    image: postgres:15.9-alpine
+    env_file: .env
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+
+  backend:
+    restart: always
+    container_name: {{ project_name }}_backend
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: gunicorn --config gunicorn_config.py {{ project_name }}.wsgi:application
+    entrypoint: /home/app/web/entrypoint.sh
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+    expose:
+      - 8000
+    env_file: .env
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+      - SERVICE_NAME=web
+    depends_on:
+      - db
+
+  nginx:
+    container_name: {{ project_name }}_nginx
+    build: ./nginx
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+    depends_on:
+      - web
 
 volumes:
   postgres_data:
+  static_volume:
+  media_volume:

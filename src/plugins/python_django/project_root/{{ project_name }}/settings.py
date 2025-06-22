@@ -1,3 +1,4 @@
+import logging.config
 import os
 from datetime import timedelta
 from pathlib import Path
@@ -40,10 +41,11 @@ ROOT_URLCONF = "{{ project_name }}.urls"
 TEMPLATES = [
   {
     "BACKEND": "django.template.backends.django.DjangoTemplates",
-    "DIRS": [],
+    "DIRS": [os.path.join(BASE_DIR, "templates")],
     "APP_DIRS": True,
     "OPTIONS": {
       "context_processors": [
+        "django.template.context_processors.debug",
         "django.template.context_processors.request",
         "django.contrib.auth.context_processors.auth",
         "django.contrib.messages.context_processors.messages",
@@ -53,21 +55,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "{{ project_name }}.wsgi.application"
-
-DATABASES = {
-  "default": {
-    "ENGINE": "django.db.backends.sqlite3",
-    "NAME": BASE_DIR / "db.sqlite3",
-  },
-  "postgresql": {
-    "ENGINE": "django.db.backends.postgresql",
-    "NAME": os.getenv("DB_NAME", "postgres"),
-    "USER": os.getenv("DB_USER", "postgres"),
-    "PASSWORD": os.getenv("DB_PASSWORD", "postgres"),
-    "HOST": os.getenv("DB_HOST", "db"),
-    "PORT": os.getenv("DB_PORT", "5432"),
-  },
-}
 
 DB_ENGINE = os.getenv("DB_ENGINE", "sqlite")
 if DB_ENGINE == "postgresql":
@@ -118,9 +105,14 @@ STATIC_URL = "static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
+MEDIA_URL = "media/"
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
+  "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
   "DEFAULT_AUTHENTICATION_CLASSES": [
     "rest_framework.authentication.SessionAuthentication",
     "rest_framework.authentication.BasicAuthentication",
@@ -151,4 +143,61 @@ SIMPLE_JWT = {
   "SIGNING_KEY": os.getenv("JWT_SIGNING_KEY", "your-super-secret-key-that-you-must-change-in-prod"),
   "USER_ID_FIELD": os.getenv("JWT_USER_ID_FIELD", "id"),
   "USER_ID_CLAIM": os.getenv("JWT_USER_ID_CLAIM", "user_id"),
+  "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
 }
+
+CACHES = {
+  "default": {
+    "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    "LOCATION": "unique-snowflake",
+  }
+}
+
+LOGGING_CONFIG = None
+LOGLEVEL = os.getenv("LOG_LEVEL", "info").upper()
+logging.config.dictConfig(
+  {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+      "verbose": {
+        "format": "%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(module)s %(process)d %(thread)d %(message)s",
+        "datefmt": "%d-%m-%Y %I:%M %p",
+      },
+      "simple": {
+        "format": "{levelname} {message}",
+        "style": "{",
+      },
+    },
+    "handlers": {
+      "email_file": {
+        "level": "INFO",
+        "class": "logging.handlers.RotatingFileHandler",
+        "filename": os.path.join(BASE_DIR, "logs/email_service.log"),
+        "maxBytes": 1024 * 1024 * 5,  # 5 MB
+        "backupCount": 5,
+        "formatter": "verbose",
+      },
+      "email_errors": {
+        "level": "ERROR",
+        "class": "logging.handlers.RotatingFileHandler",
+        "filename": os.path.join(BASE_DIR, "logs/email_errors.log"),
+        "maxBytes": 1024 * 1024 * 5,  # 5 MB
+        "backupCount": 5,
+        "formatter": "verbose",
+      },
+      "console": {
+        "level": "DEBUG",
+        "class": "logging.StreamHandler",
+        "formatter": "simple",
+      },
+    },
+    "loggers": {
+      "": {
+        "level": LOGLEVEL,
+        "propagate": True,
+        "handlers": ["email_file", "email_errors", "console"],
+      },
+    },
+  }
+)

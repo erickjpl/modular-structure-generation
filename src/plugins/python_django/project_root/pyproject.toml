@@ -25,16 +25,6 @@ select = [
 ]
 ignore = ["E501"]
 
-[tool.uv]
-scripts = [
-  "lint = 'ruff check .'",
-  "format = 'ruff format .'",
-  "fix = 'ruff check --fix'",
-  "migrate = 'python manage.py migrate'",
-  "runserver = 'python manage.py runserver'",
-  "startapp = 'python manage.py startapp'"
-]
-
 [project.optional-dependencies]
 dev = [
   "ruff>=0.3.0",
