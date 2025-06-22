@@ -1,0 +1,20 @@
+import uuid
+
+from src.shared.domain.value_objects.invalid_argument_error import InvalidArgumentError
+from src.shared.domain.value_objects.value_object import ValueObject
+
+
+class Uuid(ValueObject):
+  def __init__(self, value: str):
+    super().__init__(value)
+    self._ensure_is_valid_uuid(value)
+
+  @staticmethod
+  def new() -> "Uuid":
+    return Uuid(str(uuid.uuid4()))
+
+  def _ensure_is_valid_uuid(self, id: str) -> None:
+    try:
+      uuid.UUID(id)
+    except ValueError as e:
+      raise InvalidArgumentError(f"<{self.__class__.__name__}> does not allow the value <{id}>") from e
