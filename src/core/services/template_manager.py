@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
@@ -5,9 +6,14 @@ from jinja2 import Environment, FileSystemLoader
 from core.interfaces.init_command_base import DatabaseOption, TemplateInfo, TemplateOption
 from core.services.checker import DependencyManager
 
+PLUGINS = "plugins"
+PROJECT_ROOT = "project_root"
+PROJECT_NAME = "{{ project_name }}"
+PROJECT_NAME_000 = "000project_name000"
+
 
 class TemplateManager:
-  TEMPLATES_DIR = Path(__file__).parent.parent / "templates"
+  TEMPLATES_DIR = Path(__file__).parent.parent.parent / PLUGINS
   TEMPLATES_INFO = {
     TemplateOption.PYTHON_DJANGO.value: TemplateInfo(
       language="Python",
@@ -54,15 +60,19 @@ class TemplateManager:
     template_info = self.get_template_info(template_name)
     return self.dependency_manager.check_requirements(template_info.required_dependencies)
 
-  def render_template(self, template_name: str, context: dict, output_path: Path):
-    print(f"📦 Rendering template: {template_name} - {self.TEMPLATES_DIR}")
-    template_path = self.TEMPLATES_DIR / template_name
+  def render_template(self, template_name: str, context: dict, output_path: Path, name_project: str):
+    template_path = self.TEMPLATES_DIR / template_name.replace("-", "_") / PROJECT_ROOT
     if not template_path.exists():
       raise ValueError(f"Template directory {template_name} not found")
 
+    project_name_pattern = re.compile(r"\{\{\s*project_name\s*\}\}")
+
     for item in template_path.rglob("*"):
       if item.is_file():
-        relative_path = item.relative_to(template_path)
+        relative_path_str = str(item.relative_to(template_path))
+        relative_path_str = project_name_pattern.sub(name_project, relative_path_str)
+        relative_path = Path(relative_path_str)
+        print(relative_path)
         output_file = output_path / relative_path
 
         if item.suffix in (".png", ".jpg", ".jpeg", ".gif", ".ico", ".svg"):
@@ -72,4 +82,13 @@ class TemplateManager:
 
         content = self.jinja_env.from_string(item.read_text()).render(**context)
         output_file.parent.mkdir(parents=True, exist_ok=True)
+        content = content.replace(PROJECT_NAME, name_project).replace(PROJECT_NAME_000, name_project)
         output_file.write_text(content)
+      # else:
+      #   relative_to = (
+      #     name_project
+      #     if item.relative_to(template_path).__str__() == PROJECT_NAME.__str__()
+      #     else item.relative_to(template_path)
+      #   )
+      #   output_dir = output_path / relative_to
+      #   output_dir.mkdir(parents=True, exist_ok=True)

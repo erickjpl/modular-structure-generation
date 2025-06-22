@@ -1,4 +1,22 @@
 **UV**
+***Para iniciar o sincronizar un proyecto***
+```
+uv sync
+```
+***Para activa el entorno virtual***
+***Linux/macOS***
+```
+source .venv/bin/activate
+```
+***Windows (Command Prompt)***
+```
+.venv\Scripts\activate.bat
+```
+***Windows (PowerShell)***
+```
+.venv\Scripts\Activate.ps1
+```
+
 ***Para iniciar un proyecto***
 ```
 uv init

@@ -1,7 +1,7 @@
 [project]
-name = "project-root"
+name = "000project_name000"
 version = "0.1.0"
-description = "Add your description here"
+description = "Project {{ project_name }} has been generated with the CLI tool for Modular Structure Generation"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

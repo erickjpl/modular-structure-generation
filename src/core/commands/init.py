@@ -5,6 +5,8 @@ from core.generator.project_initializer import ProjectInitializer
 from core.interfaces.init_command_base import DatabaseOption, InitCommandConfig, TemplateOption
 from core.services.validators import validate_project_name
 
+PROJECTS = "projects"
+
 
 class InitCommand:
   def __init__(self, parser: ArgumentParser | None = None):
@@ -44,7 +46,7 @@ class InitCommand:
   def _get_project_path(self, args: Namespace, project_name: str) -> Path:
     if args.path:
       return args.path / project_name
-    return Path.cwd() / project_name
+    return Path.cwd() / PROJECTS / project_name
 
   def _create_config(self, args: Namespace) -> InitCommandConfig:
     project_name = self._get_project_name(args)

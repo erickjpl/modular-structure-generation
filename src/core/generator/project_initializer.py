@@ -32,7 +32,7 @@ class ProjectInitializer:
 
   def _process_template_files(self, config: "InitCommandConfig"):
     context = {"project_name": config.name_project, "database": config.database.value, "use_docker": config.use_docker}
-    self.template_manager.render_template(config.template, context, config.path)
+    self.template_manager.render_template(config.template, context, config.path, config.name_project)
 
   def _init_git_repository(self, path: Path):
     try:
