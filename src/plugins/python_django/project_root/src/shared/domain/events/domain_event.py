@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any
+from typing import Any, Protocol
 
-from src.shared.domain.value_objects.uuid import Uuid
+from src.shared.domain.value_objects.uuid_value_object import UuidValueObject
 
 DomainEventAttributes = dict[str, Any]
 
@@ -18,13 +18,13 @@ class DomainEvent(ABC):
     self, event_name: str, aggregate_id: str, event_id: str | None = None, occurred_on: datetime | None = None
   ):
     self.aggregate_id: str = aggregate_id
-    self.event_id: str = event_id if event_id is not None else Uuid.random().value
+    self.event_id: str = event_id if event_id is not None else UuidValueObject.random().value
     self.occurred_on: datetime = occurred_on if occurred_on is not None else datetime.now()
     self.event_name: str = event_name
 
   @classmethod
   @abstractmethod
-  def from_primitives(cls, params: dict[str, Any]) -> DomainEvent:
+  def from_primitives(cls, params: dict[str, Any]) -> "DomainEvent":
     raise NotImplementedError
 
   @abstractmethod

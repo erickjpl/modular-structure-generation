@@ -97,6 +97,10 @@ LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
 
+TIME_INPUT_FORMATS = ("%I:%M %p",)
+
+TIME_FORMAT = "H:i"
+
 USE_I18N = True
 
 USE_TZ = True
