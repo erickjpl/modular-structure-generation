@@ -1,6 +1,6 @@
 import os
 
-from django.{{ project_name }}.asgi import get_asgi_application
+from django.core.asgi import get_asgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "{{ project_name }}.settings")
 
