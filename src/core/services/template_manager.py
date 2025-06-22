@@ -72,7 +72,6 @@ class TemplateManager:
         relative_path_str = str(item.relative_to(template_path))
         relative_path_str = project_name_pattern.sub(name_project, relative_path_str)
         relative_path = Path(relative_path_str)
-        print(relative_path)
         output_file = output_path / relative_path
 
         if item.suffix in (".png", ".jpg", ".jpeg", ".gif", ".ico", ".svg"):
@@ -84,11 +83,3 @@ class TemplateManager:
         output_file.parent.mkdir(parents=True, exist_ok=True)
         content = content.replace(PROJECT_NAME, name_project).replace(PROJECT_NAME_000, name_project)
         output_file.write_text(content)
-      # else:
-      #   relative_to = (
-      #     name_project
-      #     if item.relative_to(template_path).__str__() == PROJECT_NAME.__str__()
-      #     else item.relative_to(template_path)
-      #   )
-      #   output_dir = output_path / relative_to
-      #   output_dir.mkdir(parents=True, exist_ok=True)

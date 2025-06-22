@@ -15,7 +15,7 @@ class ProjectInitializer:
     self._process_template_files(config)
 
     if not config.not_git:
-      self._initialize_git_repo(config.path)
+      self._initialize_git_repo(config.path, config.name_project)
 
     if config.use_docker:
       self._setup_docker(config)
@@ -34,17 +34,24 @@ class ProjectInitializer:
     context = {"project_name": config.name_project, "database": config.database.value, "use_docker": config.use_docker}
     self.template_manager.render_template(config.template, context, config.path, config.name_project)
 
-  def _init_git_repository(self, path: Path):
+  def _initialize_git_repo(self, path: Path, name_project: str):
     try:
       subprocess.run(["git", "init", str(path)], check=True)
-      print("✅ Git repository initialized")
+      print("\n✅ Git repository initialized")
+
+      subprocess.run(["git", "-C", str(path), "add", "-A"], check=True)
+      print("✅ All files added to staging")
+
+      commit_message = f"Initialize project: {name_project}" if name_project else "Initialize project"
+      subprocess.run(["git", "-C", str(path), "commit", "-m", commit_message], check=True)
+      print(f"✅ Initial commit created: '{commit_message}'")
     except subprocess.CalledProcessError:
-      print("⚠️  Git initialization failed (git may not be installed)")
+      print("\n⚠️  Git initialization failed (git may not be installed)")
 
   def _setup_docker(self, config: InitCommandConfig):
     template_info = self.template_manager.get_template_info(config.template)
     if not template_info.supports_docker:
-      print("⚠️  Docker is not supported for this template.")
+      print("\n⚠️  Docker is not supported for this template.")
       return
 
     docker_context = {"project_name": config.name_project, "database": config.database.value}
@@ -61,4 +68,4 @@ class ProjectInitializer:
     compose_content = self.template_manager.jinja_env.get_template(compose_template).render(**docker_context)
     compose_path.write_text(compose_content)
 
-    print("✅ Docker files configured")
+    print("\n✅ Docker files configured")
