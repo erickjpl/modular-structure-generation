@@ -1,5 +1,14 @@
-from src.invoices.domain import IInvoiceRepository, Invoice, InvoiceNumber
-from src.invoices.infrastructure.models import InvoiceModel
+from src.invoices.domain import (
+  CustomerId,
+  IInvoiceRepository,
+  Invoice,
+  InvoiceDate,
+  InvoiceLineItemModel,
+  InvoiceNumber,
+  Money,
+  Payment,
+)
+from src.invoices.infrastructure.persistences.models import InvoiceModel
 
 
 class DjangoInvoiceRepository(IInvoiceRepository):
@@ -22,10 +31,7 @@ class DjangoInvoiceRepository(IInvoiceRepository):
 
   def save(self, invoice: Invoice):
     # Lógica para mapear Invoice de dominio a InvoiceModel y guardarlo
-    if invoice.id:
-      invoice_db = InvoiceModel.objects.get(id=invoice.id)
-    else:
-      invoice_db = InvoiceModel()
+    invoice_db = InvoiceModel.objects.get(id=invoice.id) if invoice.id else InvoiceModel()
 
     invoice_db.invoice_number = invoice.invoice_number.value
     invoice_db.issue_date = invoice.issue_date.value
@@ -62,7 +68,7 @@ class DjangoInvoiceRepository(IInvoiceRepository):
       payments=payments_domain,
     )
 
-  def _save_line_items(self, invoice_db: InvoiceModel, line_items: list[ProductLine]):
+  def _save_line_items(self, invoice_db: InvoiceModel, line_items: list[InvoiceLineItemModel]):
     # Eliminar los que ya no están, actualizar los existentes, crear los nuevos
     pass
 
