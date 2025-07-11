@@ -14,5 +14,5 @@ class QueryHandler[Q: Query, R: Response](ABC):
     raise NotImplementedError
 
   @abstractmethod
-  async def handle(self, query: Q) -> R:
+  def handle(self, query: Q) -> R:
     raise NotImplementedError

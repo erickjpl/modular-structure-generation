@@ -1,13 +1,13 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Protocol
 
 from src.shared.domain.events.domain_event import DomainEvent
 from src.shared.domain.events.domain_event_subscriber import DomainEventSubscriber
 
 
-class EventBus(ABC, Protocol):
+class EventBus(Protocol):
   @abstractmethod
-  async def publish(self, events: list[DomainEvent]) -> None:
+  def publish(self, events: list[DomainEvent]) -> None:
     raise NotImplementedError
 
   @abstractmethod

@@ -1,5 +1,5 @@
 bind = "0.0.0.0:8000"
-module = "relancinorf.wsgi:application"
+module = "{{ project_name }}.wsgi:application"
 
 workers = 2
 worker_connections = 1000

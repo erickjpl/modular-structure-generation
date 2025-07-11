@@ -18,7 +18,7 @@ class DomainEvent(ABC):
     self, event_name: str, aggregate_id: str, event_id: str | None = None, occurred_on: datetime | None = None
   ):
     self.aggregate_id: str = aggregate_id
-    self.event_id: str = event_id if event_id is not None else UuidValueObject.random().value
+    self.event_id: str = event_id if event_id is not None else UuidValueObject.new().value
     self.occurred_on: datetime = occurred_on if occurred_on is not None else datetime.now()
     self.event_name: str = event_name
 

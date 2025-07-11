@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar
+from typing import Any, TypeVar
 
 from src.shared.domain.commands.command import Command
 
@@ -7,8 +7,11 @@ C = TypeVar("C", bound=Command)
 
 
 class CommandHandler[C: Command](ABC):
+  def __init__(self, service: Any):
+    self.updater = service
+
   @abstractmethod
-  async def handle(self, command: C) -> None:
+  def handle(self, command: C) -> None:
     raise NotImplementedError
 
   @classmethod
