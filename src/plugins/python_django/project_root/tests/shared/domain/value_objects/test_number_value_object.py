@@ -30,7 +30,7 @@ class TestNumberValueObject:
   def test_should_raise_invalid_argument_error_for_non_numeric_value(self):
     invalid_str_value = "hello"
 
-    expected_error_regex = r"NumberValueObject must be an integer or a float"
+    expected_error_regex = r"NumberValueObject must be an integer, float or decimal"
 
     with pytest.raises(InvalidArgumentError, match=expected_error_regex):
       NumberValueObject(invalid_str_value)
